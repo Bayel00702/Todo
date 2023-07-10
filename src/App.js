@@ -1,23 +1,49 @@
-import logo from './logo.svg';
-import './App.css';
+
+import {useEffect, useState} from "react";
+import { v4 as uuidv4 } from 'uuid';
+import TodoList from "./components/TodoList/TodoList";
+import TodoAdd from "./components/TodoAdd/TodoAdd";
+import TodoBottom from "./components/TodoBottom/TodoBottom";
+import './style/style.scss'
+import TodoBottomBtns from "./components/TodoBottom/TodoBottomBtns";
+
 
 function App() {
+
+  const [status, setStatus] = useState('all');
+
+  const [todo, setTodo] = useState([]);
+
+  useEffect(() => {
+    if (localStorage.getItem('todo') !== null){
+      setTodo(JSON.parse(localStorage.getItem('todo')))
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('todo', JSON.stringify(todo))
+  }, [todo]);
+
+
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <section className='todo'>
+        <div className='todo__block'>
+          <h1 className='todo__title'>TodoList</h1>
+          <TodoAdd todo = {todo} setTodo={setTodo}/>
+
+          {
+            todo.length ?
+                <>
+                <TodoList status={status} todo={todo} setTodo={setTodo}/>
+                <TodoBottom todo={todo} setTodo={setTodo}/>
+                <TodoBottomBtns setStatus={setStatus}/>
+                </>
+                : <h2 className="todo__empty">The task list is empty!</h2>
+          }
+        </div>
+      </section>
     </div>
   );
 }
